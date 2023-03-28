@@ -1,5 +1,3 @@
-# payload
-sample work
 
 Database : testwork
 
