@@ -64,35 +64,12 @@ func dsn(dbName string) string {
 //To connect to database and return a DB object
 
 func dbConnection() (*sql.DB, error) {
-	/*db, err := sql.Open("mysql", dsn(""))
-	//defer db.Close()
-	if err != nil {
-		log.Printf("Error %s when opening DB\n", err)
-		return nil, err
-	}
-	fmt.Printf("MySQL Opened")
-
-	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelfunc()
-	res, err := db.ExecContext(ctx, "CREATE DATABASE IF NOT EXISTS "+dbname)
-	if err != nil {
-		log.Printf("Error %s when creating DB\n", err)
-		return nil, err
-	}
-	no, err := res.RowsAffected()
-	if err != nil {
-		log.Printf("Error %s when fetching rows", err)
-		return nil, err
-	}
-	log.Printf("rows affected %d\n", no)
-
-	db.Close()*/
 	db, err := sql.Open("mysql", dsn(dbname))
+
 	if err != nil {
 		log.Printf("Error %s when opening DB", err)
 		return nil, err
 	}
-	//defer db.Close()
 
 	db.SetMaxOpenConns(20)
 	db.SetMaxIdleConns(20)
@@ -105,26 +82,8 @@ func dbConnection() (*sql.DB, error) {
 		log.Printf("Errors %s pinging DB", err)
 		return nil, err
 	}
-	log.Printf("Connected to DB %s successfully\n", dbname)
+	//log.Printf("Connected to DB %s successfully\n", dbname)
 	return db, nil
-}
-
-func createDB(db *sql.DB) error {
-	query := "CREATE DATABASE IF NOT EXISTS " + dbname
-	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelfunc()
-	res, err := db.ExecContext(ctx, query)
-	if err != nil {
-		log.Printf("Error %s when creating Database"+dbname, err)
-		return err
-	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		log.Printf("Error %s when getting rows affected", err)
-		return err
-	}
-	log.Printf("Rows affected when creating database: %d", rows)
-	return nil
 }
 
 //To create ITEMS table in the database
@@ -244,6 +203,8 @@ func insert_items(db *sql.DB, item ITEM, id string) error {
 	return nil
 }
 
+// to create tables and insert values from json file
+
 func setup(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
 	defer db.Close()
@@ -271,9 +232,9 @@ func setup(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.Write([]byte(msg))
-	//log.Printf(msg)
-	//json.NewEncoder(w).Encode(msg)
 }
+
+//to display all the existing orders
 
 func getOrders(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
@@ -323,6 +284,8 @@ func getOrders(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//to display order details of a specific id
+
 func getOrdersById(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
 	defer db.Close()
@@ -370,6 +333,8 @@ func getOrdersById(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+//to display order details of a particular status
 
 func getOrdersByStatus(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
@@ -419,6 +384,8 @@ func getOrdersByStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// to add the details of a new order
+
 func addOrder(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
 	defer db.Close()
@@ -457,6 +424,8 @@ func addOrder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// to update the status of an order
+
 func updateStatus(w http.ResponseWriter, r *http.Request) {
 	db, err := dbConnection()
 	defer db.Close()
@@ -490,12 +459,26 @@ func updateStatus(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	r := mux.NewRouter()
+
+	//to create the tables Orders and Items and to Add Values in it from pay123.json file
 	r.HandleFunc("/builddb", setup).Methods("GET")
+
+	//to fetch all the existing order data
 	r.HandleFunc("/orders", getOrders).Methods("GET")
+
+	//to fetch the order details by a specific order id
 	r.HandleFunc("/orders/id/{id}", getOrdersById).Methods("GET")
+
+	//to fetch the order details by a specific order status
 	r.HandleFunc("/orders/status/{status}", getOrdersByStatus).Methods("GET")
+
+	//to add new order details into the database from request body
 	r.HandleFunc("/orders", addOrder).Methods("POST")
+
+	//to update the status of a specific order from request body
 	r.HandleFunc("/orders/update/{id}", updateStatus).Methods("PUT")
+
+	//opening port number 8080 on localhost
 	http.ListenAndServe(":8080", r)
 
 }
