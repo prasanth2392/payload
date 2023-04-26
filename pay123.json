@@ -1,34 +1,34 @@
 {
-    "Order":[
+    "order":[
     {
-	"Id": "abcdef-2",
-	"Status": "PENDING_INVOICE",
-    "Items": [{
-		"Id": "1",
-		"Description": "pen",
-		"Price": 12,
-		"Quantity": 1
+	"id": "abcdef-2",
+	"status": "PENDING_INVOICE",
+    "items": [{
+		"id": "1",
+		"description": "pen",
+		"price": 12,
+		"quantity": 1
 	},
     {
-		"Id": "2",
-		"Description": "box",
-		"Price": 50,
-		"Quantity": 1
+		"id": "2",
+		"description": "box",
+		"price": 50,
+		"quantity": 1
 	}],
-	"Total": 62,
-	"CurrencyUnit": "USD"
+	"total": 62,
+	"currencyUnit": "USD"
     },
     {
-        "Id": "abcdef-1",
-        "Status":"Success",
-        "Items": [{
-            "Id": "1",
-            "Description": "pencil",
-            "Price": 8,
-           "Quantity": 1
+        "id": "abcdef-1",
+        "status":"Success",
+        "items": [{
+            "id": "1",
+            "description": "pencil",
+            "price": 8,
+           "quantity": 1
         }],
-        "Total": 16,
-        "CurrencyUnit": "USD"
+        "total": 16,
+        "currencyUnit": "USD"
     }
 ]
 }
